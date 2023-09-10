@@ -1,5 +1,5 @@
 document.getElementById("title-btn2").addEventListener("click", function () {
-    window.location.href = "../htmls/howtoplay.html";
+    window.location.href = "./howtoplay.html";
 });
 
 
