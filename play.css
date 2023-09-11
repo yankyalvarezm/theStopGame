@@ -39,6 +39,7 @@ h1 {
     height: 2rem;
     width: 10rem;
     border-radius: 1rem;
+    /* border: 3px solid black; */
     padding: 1.5rem 1.5rem;
     color: white;
     font-family: var(--titles);
@@ -90,4 +91,83 @@ h1 {
     font-family: var(--titles);
     color: black;
     font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/** Horizontal Line **/
+
+.hr-main {
+    border: 1px solid black;
+    margin-top: 3rem;
+    width: 80%;
+}
+
+/** Gamplay Styles **/
+
+.description-gameplay {
+    font-family: var(--titles);
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.headings-container {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.round-title {
+    padding: 0.5rem 0.05rem;
+    width: 100%;
+    border: 2px solid black;
+    font-size: 2rem;
+}
+
+.round-title:hover {
+    background-color: rgb(232, 70, 70);
+    color: white;
+    transition: 0.5s;
+}
+
+.gameplay-container {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.cat-container {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.categories {
+    margin-top: 1.5rem;
+    background-color: #D5D5D5;
+    color: white;
+    border: 1.6px solid black;
+
+}
+
+.categories:hover {
+    background-color: rgb(242, 238, 238);
+    color: black;
+}
+
+.nameScore-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nameScore {
+    margin-top: 1.5rem;
+    background-color: rgb(246, 192, 55);
+    border: 2px solid black;
+    color: white;
+}
+
+.nameScore:hover {
+    color: black;
+    background-color: rgb(241, 223, 107);
 }
