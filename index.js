@@ -21,3 +21,4 @@ const intervalId = setInterval(() => {
 document.getElementById('title-btn1').addEventListener('click', function () {
     window.location.href = './play.html';
 })
+

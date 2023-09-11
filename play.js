@@ -22,15 +22,25 @@ function elClassCont(tag, className, content, parent) {
     return element;
 }
 
+let timeLeft = 10;
+
+function countdown() {
+    timeLeft--;
+    document.getElementById("seconds").innerHTML = String(timeLeft);
+    if (timeLeft > 0) {
+        setTimeout(countdown, 1000);
+    }
+};
+
 // ? HTML Structure
 
+const title = document.querySelector('h1');
 const main = elClass('MAIN', 'container')
 
 const generators = elClassCont('SECTION', 'generators', '', main)
 elClassCont('DIV', 'small-rectangle', 'A', generators);
 
 const sideContainer = elClassCont('DIV', 'side-container', '', generators)
-// elClassCont('DIV', 'small-rectangle', '', sideContainer);
 elClassCont('DIV', 'small-rectangle click-me', 'Click Me!', sideContainer);
 
 
@@ -60,13 +70,29 @@ function startSequence(sideContainer) {
 
             const restartBtn = document.getElementsByClassName('restart')[0];
             if (!restartBtn) {
-                // Create new 'restart' button if it doesn't exist
                 elClassCont('DIV', 'small-rectangle restart', 'Restart', sideContainer);
             }
 
-            // Attach or re-attach the click event to the restart button
+            const timerCircle = document.getElementById('timer');
+            if (!timerCircle) {
+                const timer = document.createElement('DIV')
+                timer.id = 'timer'
+
+                const mainElement = document.querySelector('main');
+                mainElement.parentNode.insertBefore(timer, mainElement);
+
+
+                const timerSpan = elClassCont('SPAN', '', '10', timer);
+                timerSpan.id = 'seconds';
+                countdown();
+
+            }
+
             document.getElementsByClassName('restart')[0].addEventListener('click', function () {
+                console.log('restart')
+
                 startSequence(sideContainer);
+                timeLeft = 10;
             });
         }
     }, 50);
@@ -75,7 +101,8 @@ function startSequence(sideContainer) {
 document.getElementsByClassName('click-me')[0].addEventListener('click', function () {
     console.log('btn click - test');
 
-    // If this button is already disabled, do nothing and return
+
+
     if (this.disabled) {
         return;
     }
