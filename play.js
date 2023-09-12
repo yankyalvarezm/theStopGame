@@ -71,13 +71,16 @@ function countdown() {
         const gameplayDescription = elClass('h3', 'description-gameplay')
         gameplayDescription.innerHTML = `Try to fill as much categories as you can, good luck!`;
 
-        // Gameplay Section
+        // ** Gameplay Structure Section
 
+        // * No. of Round - HEADING
         const roundTitle = elClassCont('DIV', 'small-rectangle round-title', `ROUND ${1}`, body);
 
+
+        // * Container for all
         const gameplayContainer = elClassCont('DIV', 'gameplay-container', '', body);
 
-
+        // * Headings & Categories
         const headingsContainer = elClassCont('DIV', 'headings-container', '', gameplayContainer);
 
         const catContainer = elClassCont('DIV', 'cat-container', '', headingsContainer);
@@ -89,14 +92,86 @@ function countdown() {
         const playerName = elClassCont('DIV', 'small-rectangle nameScore', 'Player', nameScoreContainer);
         const score = elClassCont('DIV', 'small-rectangle nameScore', 'Score', nameScoreContainer);
 
+        // * Inputs, Names & Score
+        const inputsContainer = elClassCont('DIV', 'inputs-container', '', body);
+
+        const inputsCatContainer = elClassCont('DIV', 'inputCatContainer', '', inputsContainer);
+        const inputCountry = elClassCont('textarea', 'inputsCat input-country', '', inputsCatContainer);
+        const inputSport = elClassCont('textarea', 'inputsCat input-sport', '', inputsCatContainer);
+        const inputProfession = elClassCont('textarea', 'inputsCat input-profession', '', inputsCatContainer);
 
 
+        const inputNameScore = elClassCont('DIV', 'inputNameScore', '', inputsContainer);
+        const inputName = elClassCont('DIV', 'small-rectangle input-name', 'Name', inputNameScore);
+        const inputScore = elClassCont('DIV', 'small-rectangle input-score', '00', inputNameScore);
 
+        // ** Inputs Alerts ** //
 
+        const inputCountrySelector = document.getElementsByClassName('input-country')
+        const inputSportSelector = document.getElementsByClassName('input-sport')
+        const inputProfessionSelector = document.getElementsByClassName('input-profession')
 
+        // ** Country
+        Array.from(inputCountrySelector).forEach(input => {
+            input.addEventListener('input', function () {
+                if (this.value.length > 20) {
+                    gameplayDescription.innerHTML = `<p style="color: red;"> Max Country Length Reach</p>`
+                    this.value = this.value.slice(0, 20);
+                } else if (/\d/.test(this.value)) {
+                    gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
+                } else {
+                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
+                }
+            });
+        });
 
+        // * Country Validation
+
+        Array.from(inputCountrySelector).forEach(input => {
+            let debounceTimeout = null;
+
+            input.addEventListener('input', function () {
+                clearTimeout(debounceTimeout);  // Clear any existing timeouts
+
+                debounceTimeout = setTimeout(() => {
+                    const inputCountry = this.value;
+                    console.log(inputCountry);
+                    const startingLetter = 'B';
+                    console.log(startingLetter);
+                    const verificationResult = verifyCountry(inputCountry, startingLetter);
+                    console.log(verificationResult);
+                }, 500);  // Wait for 500ms before running the code inside the setTimeout
+            });
+        });
+
+        // ** Sports
+        Array.from(inputSportSelector).forEach(input => {
+            input.addEventListener('input', function () {
+                if (this.value.length > 20) {
+                    gameplayDescription.innerHTML = `<p style="color: red;"> Max Sport Length Reach</p>`
+                    this.value = this.value.slice(0, 20);
+                } else if (/\d/.test(this.value)) {
+                    gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
+                } else {
+                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
+                }
+            });
+        });
+
+        // ** Profession
+        Array.from(inputProfessionSelector).forEach(input => {
+            input.addEventListener('input', function () {
+                if (this.value.length > 20) {
+                    gameplayDescription.innerHTML = `<p style="color: red;"> Max Profession Length Reach</p>`
+                    this.value = this.value.slice(0, 20);
+                } else if (/\d/.test(this.value)) {
+                    gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
+                } else {
+                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
+                }
+            });
+        });
     }
-
 };
 
 // ? HTML Structure
