@@ -98,3 +98,7 @@ main {
     background-color: green;
     color: white;
 }
+
+.warning {
+    color: red;
+}

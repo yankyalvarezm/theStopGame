@@ -5,8 +5,8 @@ document.getElementById('stop').addEventListener('click', function () {
 console.log('play.js connected')
 
 
-
-// ? Functions 
+// ? --------------------------------------------------------
+// ? (Main Functions) - Creates Elements, Classes, innerHTMLs & Assign Parents
 
 function elClass(tag, className,) {
     const element = Object.assign(document.createElement(tag), { className });
@@ -20,37 +20,252 @@ function elClassCont(tag, className, content, parent) {
     return element;
 }
 
+// ? --------------------------------------------------------
+// ? Global Variables
 
 let randomLetter = '';
 let timeLeft = 5;
+let round = -1;
 let timeoutId = null;
+let loop = -1;
+const maxlooop = 3;
+const maxround = 3;
+let isEvent = false;
+
+const timer = document.createElement('DIV')
+timer.id = 'timer'
+const roundTitle = document.createElement('DIV')
+roundTitle.classList.add('small-rectangle')
+roundTitle.classList.add('round-title1')
+
+// const roundtitle = document.getElementsByClassName('round-title');
+
+console.log('loop:', loop)
+console.log('Round:', round)
+console.log('time left:', timeLeft);
+
+const body = document.querySelector('body'); /* Contains ALL */
+const title = document.querySelector('h1'); /* (UPPER LEFT - TITLE)the STOP game */
+const timeRound = elClassCont('DIV', 'timeRound-container', '', body) /* Contains Time & Round */
+const main = elClass('MAIN', 'container'); /* Contains the Rand Letter, Click me! & Stop btn */
+elClass('hr', 'hr-main'); /* HR located under main container */
+
+
+// ? --------------------------------------------------------
+
+
+// ? --------------------------------------------------------
+// ? (Start the Sequence) - Selects a random letter, Add and remove Restart btn
+
+
+const generators = elClassCont('SECTION', 'generators', '', main)
+elClassCont('DIV', 'small-rectangle letter-holder', 'A', generators);
+
+const sideContainer = elClassCont('DIV', 'side-container', '', generators)
+elClassCont('DIV', 'small-rectangle click-me', 'Click Me!', sideContainer);
+
+function startSequence(sideContainer) {
+    let currentIndex = 0;
+    let loopSequence = 0;
+    const maxloopSequence = 2;
+    const lettersArray = 'ABCDEFGHIJKLMNOPQRSTUVYZ'.split('');
+
+    if (loop === -1) {
+        loop++
+        round++
+    }
+
+    const intervalId = setInterval(() => {
+        document.querySelector('.small-rectangle').innerText = lettersArray[currentIndex];
+        currentIndex = (currentIndex + 1) % lettersArray.length;
+
+        if (currentIndex === 0) {
+            loopSequence++;
+        }
+
+        if (round === 0) {
+            roundTitle.innerHTML = `Be Prepare`
+        }
+
+        if (loopSequence === maxloopSequence) {
+            clearInterval(intervalId);
+
+            const randomIndex = Math.floor(Math.random() * lettersArray.length);
+
+            randomLetter = lettersArray[randomIndex];
+            document.querySelector('.letter-holder').innerText = lettersArray[randomIndex];
+
+            console.log('letter:', randomLetter);
+
+            Array.from(document.getElementsByClassName('click-me')).forEach(el => {
+                el.style.backgroundColor = '#D5D5D5';
+                el.innerText = "<--------";
+            });
+
+            const restartBtn = document.getElementsByClassName('restart')[0];
+
+            if (!restartBtn) {
+                elClassCont('DIV', 'small-rectangle restart', 'Restart', sideContainer);
+            }
+
+            const timerCircle = document.getElementById('timer');
+            if (!timerCircle) {
+
+                timeRound.appendChild(timer);
+                timeRound.appendChild(roundTitle);
+
+                const timerSpan = elClassCont('SPAN', '', '10', timer);
+                timerSpan.id = 'seconds';
+                countdown();
+                console.log('countdown active')
+            }
+
+            document.getElementsByClassName('restart')[0].addEventListener('click', function () {
+                console.log('restart')
+                timeLeft = 5;
+                startSequence(sideContainer);
+            });
+        }
+    }, 50);
+}
+
+// ? --------------------------------------------------------
+// ? (Event Listener) - Fires the Start Sequence
+document.getElementsByClassName('click-me')[0].addEventListener('click', function () {
+    if (this.disabled) {
+        return;
+    }
+
+    this.disabled = true;
+    startSequence(sideContainer);
+
+    console.log('Sequence Started')
+});
+
+// ? --------------------------------------------------------
+// ? (Main Function) - CountDown  
 
 function countdown() {
+    if (timeLeft === 0 && loop !== maxlooop && round !== maxround) {
+        loop++;
+        round++
+
+        if (round === 1) {
+            roundTitle.innerHTML = `Round: ${round}/3`
+        } else if (round === 2) {
+            roundTitle.innerHTML = `Round: ${round}/3`
+        } else {
+            roundTitle.innerHTML = `Round: ${round}/3`
+        }
+
+        if (document.querySelector('.restart')) {
+            removeRestart()
+            console.log('--remove restart btn')
+        }
+
+        const clickme = document.querySelector('.click-me');
+        clickme.innerHTML = 'Start';
+
+        console.log('loop:', loop);
+        console.log('Round:', round);
+    }
+
+    // TODO: Resets time to: 25 and hides elements ------------------------------
+
     const clickMe = document.getElementsByClassName('click-me')[0];
 
     document.getElementById("seconds").innerHTML = String(timeLeft);
 
-    if (timeLeft > 0) {
-        timeLeft--;
-        // console.log(clickMe)
+    if (!isEvent) {
 
         clickMe.addEventListener('click', function () {
+            const gameplayContainer = document.querySelector('.gameplay-container');
+            const inputsContainer = document.querySelector('.inputs-container');
+            const descriptionID = document.getElementById('descriptionID');
+            const roundtitle = document.querySelector('.round-title');
+            const clickme = document.querySelector('.click-me')
+            const randomIndex = Math.floor(Math.random() * lettersArray.length);
+
+            clickme.classList.toggle('hidden');
+            // clickme.setAttribute('disabled')
+            console.log('clickme hidden', clickme)
+
+
+
+            randomLetter = lettersArray[randomIndex];
+            document.querySelector('.letter-holder').innerText = lettersArray[randomIndex];
+
+            console.log('letter:', randomLetter);
+
 
             clearTimeout(timeoutId)
+
+            timeLeft = 0;
+
+
+            if (round === 1) {
+                roundTitle.innerHTML = `Round: ${round}/3`
+            } else if (round === 2) {
+                roundTitle.innerHTML = `Round: ${round}/3`
+            } else {
+                roundTitle.innerHTML = `Round: ${round}/3`
+            }
+
             const seconds = document.getElementById('seconds')
-            seconds.textContent = '0';
-            console.log('stop')
+            seconds.textContent = `${timeLeft}`;
 
+            if (gameplayContainer && inputsContainer && descriptionID && roundTitle) {
+                gameplayContainer.classList.toggle('hidden')
+                inputsContainer.classList.toggle('hidden')
+                descriptionID.classList.toggle('hidden');
+                roundtitle.classList.toggle('hidden');
+            }
+
+            resetTimer(25)
+            countdown()
+
+            console.log('timeLeft:', timeLeft);
+            console.log('Stop Sequence');
+            console.log('loop:', loop);
+            console.log('Round:', round);
         })
-        // console.log("line 27")
-        timeoutId = setTimeout(countdown, 1000);
-    } else if (timeLeft === 0) {
-        console.log("line 30")
 
-        removeRestart()
-        resetTimer(60)
-        timeoutId = setTimeout(countdown, 1000);
+        isEvent = true;
+    }
 
+    // TODO: Decreas time ---------------------------------------------------
+
+    if (timeLeft > 0) {
+        timeLeft--;
+
+        console.log('time left:', timeLeft);
+
+        timeoutId = setTimeout(countdown, 1000);
+    }
+
+    // TODO: Loop #1 ---------------------------------------------------------
+
+    if (timeLeft === 0 && loop === 1) {
+
+        const gameplayContainer = document.querySelector('.gameplay-container');
+        const inputsContainer = document.querySelector('.inputs-container');
+        const descriptionID = document.getElementById('descriptionID');
+        const roundtitle = document.querySelector('.round-title')
+        const clickme = document.querySelector('.click-me')
+
+        if (gameplayContainer && inputsContainer && descriptionID && roundTitle) {
+            gameplayContainer.classList.toggle('hidden')
+            inputsContainer.classList.toggle('hidden')
+            descriptionID.classList.toggle('hidden');
+            roundtitle.classList.toggle('hidden');
+            clickme.classList.toggle('hidden');
+
+            console.log('toggle #1')
+        }
+        hideElements()
+    }
+
+    if (timeLeft === 24 && loop === 1) {
         Array.from(document.getElementsByClassName('click-me')).forEach(el => {
             el.style.backgroundColor = 'white';
             el.style.color = 'black';
@@ -68,17 +283,20 @@ function countdown() {
                 this.innerText = "S T O P";
             });
         });
-        console.log('line 35');
+    }
 
+    if (timeLeft === 22 && loop === 1) {
         const gameplayDescription = elClass('h3', 'description-gameplay')
         gameplayDescription.id = 'descriptionID';
         gameplayDescription.innerHTML = `Try to fill as much categories as you can, good luck!`;
+    }
+
+    if (timeLeft === 19 && loop === 1) {
 
         // ** Gameplay Structure Section
 
         // * No. of Round - HEADING
-        const roundTitle = elClassCont('DIV', 'small-rectangle round-title', `ROUND ${1}`, body);
-
+        const roundbar = elClassCont('DIV', 'small-rectangle round-title', ``, body);
 
         // * Container for all
         const gameplayContainer = elClassCont('DIV', 'gameplay-container', '', body);
@@ -97,7 +315,6 @@ function countdown() {
 
         // * Inputs, Names & Score
         const inputsContainer = elClassCont('DIV', 'inputs-container', '', body);
-        elClassCont('hr', 'player-division', '', body);
 
         const inputsCatContainer = elClassCont('DIV', 'inputCatContainer', '', inputsContainer);
         const inputCountry = elClassCont('textarea', 'inputsCat input-country', '', inputsCatContainer);
@@ -241,86 +458,36 @@ function countdown() {
             });
         });
     }
+
+    // TODO Loop #2 ------------------------------------------------
+
+    // if (timeLeft === 0 && loop === 2) {
+
+    //     clickMe.addEventListener('click', function () {
+    //         const gameplayContainer = document.querySelector('.gameplay-container');
+    //         const inputsContainer = document.querySelector('.inputs-container');
+    //         const descriptionID = document.getElementById('descriptionID');
+    //         const roundtitle = document.querySelector('.round-title')
+
+    //         if (gameplayContainer && inputsContainer && descriptionID && roundTitle) {
+    //             gameplayContainer.classList.toggle('hidden')
+    //             inputsContainer.classList.toggle('hidden')
+    //             descriptionID.classList.toggle('hidden');
+    //             roundtitle.classList.toggle('hidden');
+    //         }
+
+    //         console.log('toggle #2')
+    //     })
+
+
+
+    //     // resetTimer(25)
+    //     // console.log('-- The time is reset --')
+    //     // countdown()
+    // }
+
+
 };
-
-// ? HTML Structure
-
-const title = document.querySelector('h1');
-const main = elClass('MAIN', 'container');
-const body = document.querySelector('body');
-
-const generators = elClassCont('SECTION', 'generators', '', main)
-elClassCont('DIV', 'small-rectangle', 'A', generators);
-
-const sideContainer = elClassCont('DIV', 'side-container', '', generators)
-elClassCont('DIV', 'small-rectangle click-me', 'Click Me!', sideContainer);
-
-
-// Extract logic into its own function
-function startSequence(sideContainer) {
-    let currentIndex = 0;
-    let loops = 0;
-    const maxLoops = 2;
-    const lettersArray = 'ABCDEFGHIJKLMNOPQRSTUVYZ'.split('');
-
-    const intervalId = setInterval(() => {
-        document.querySelector('.small-rectangle').innerText = lettersArray[currentIndex];
-        currentIndex = (currentIndex + 1) % lettersArray.length;
-
-        if (currentIndex === 0) {
-            loops++;
-        }
-
-        if (loops === maxLoops) {
-            clearInterval(intervalId);
-
-            const randomIndex = Math.floor(Math.random() * lettersArray.length);
-
-            randomLetter = lettersArray[randomIndex];
-            document.querySelector('.small-rectangle').innerText = lettersArray[randomIndex];
-            Array.from(document.getElementsByClassName('click-me')).forEach(el => {
-                el.style.backgroundColor = '#D5D5D5';
-                el.innerText = "<--------";
-            });
-
-            const restartBtn = document.getElementsByClassName('restart')[0];
-
-            if (!restartBtn) {
-                elClassCont('DIV', 'small-rectangle restart', 'Restart', sideContainer);
-            }
-
-            const timerCircle = document.getElementById('timer');
-            if (!timerCircle) {
-                const timer = document.createElement('DIV')
-                timer.id = 'timer'
-
-                const mainElement = document.querySelector('main');
-                mainElement.parentNode.insertBefore(timer, mainElement);
-
-
-                const timerSpan = elClassCont('SPAN', '', '10', timer);
-                timerSpan.id = 'seconds';
-                countdown();
-            }
-
-            document.getElementsByClassName('restart')[0].addEventListener('click', function () {
-                console.log('restart')
-                timeLeft = 6;
-                startSequence(sideContainer);
-            });
-        }
-    }, 50);
-}
-
-document.getElementsByClassName('click-me')[0].addEventListener('click', function () {
-    if (this.disabled) {
-        return;
-    }
-
-    this.disabled = true;
-    startSequence(sideContainer);
-
-});
 
 function removeRestart() {
     let restartButton = document.getElementsByClassName('restart')[0]
@@ -332,6 +499,3 @@ function removeRestart() {
 function resetTimer(seconds) {
     timeLeft = seconds;
 }
-
-
-elClass('hr', 'hr-main');

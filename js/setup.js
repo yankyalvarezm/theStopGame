@@ -63,6 +63,7 @@ nameInput.addEventListener('input', function () {
                     btn.classList.add('active');
                     selectedButton = btn;
                     checkConditions();
+                    console.log(checkConditions(), selectedButton.innerHTML);
                 });
                 btns.appendChild(btn);
             });
@@ -88,7 +89,7 @@ playButton.addEventListener('click', function () {
 playButton.addEventListener('click', function () {
     const nameValue = nameInput.value;
     localStorage.setItem('userName', nameValue);
-    window.location.href = './play.html'; // Navigate to play.html
+    window.location.href = './play.html';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
