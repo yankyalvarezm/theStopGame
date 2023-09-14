@@ -127,7 +127,7 @@ h1 {
 }
 
 .round-title:hover {
-    background-color: rgb(232, 70, 70);
+    background-color: rgb(144, 197, 144);
     color: white;
     transition: 0.5s;
 }

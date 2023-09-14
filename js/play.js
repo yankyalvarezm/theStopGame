@@ -31,6 +31,8 @@ let loop = -1;
 const maxlooop = 3;
 const maxround = 3;
 let isEvent = false;
+let gameScore = 0;
+let totalScore = 0;
 
 const timer = document.createElement('DIV')
 timer.id = 'timer'
@@ -184,7 +186,11 @@ function countdown() {
             const descriptionID = document.getElementById('descriptionID');
             const roundtitle = document.querySelector('.round-title');
             const clickme = document.querySelector('.click-me')
-            const randomIndex = Math.floor(Math.random() * lettersArray.length);
+
+            // let currentIndex = 0;
+            // const lettersArray = 'ABCDEFGHIJKLMNOPQRSTUVYZ'.split('');
+            // const randomIndex = Math.floor(Math.random() * lettersArray.length);
+            // currentIndex = (currentIndex + 1) % lettersArray.length;
 
             clickme.classList.toggle('hidden');
             // clickme.setAttribute('disabled')
@@ -192,10 +198,10 @@ function countdown() {
 
 
 
-            randomLetter = lettersArray[randomIndex];
-            document.querySelector('.letter-holder').innerText = lettersArray[randomIndex];
+            // randomLetter = lettersArray[randomIndex];
+            // document.querySelector('.letter-holder').innerText = lettersArray[randomIndex];
 
-            console.log('letter:', randomLetter);
+            // console.log('letter:', randomLetter);
 
 
             clearTimeout(timeoutId)
@@ -237,8 +243,8 @@ function countdown() {
 
     if (timeLeft > 0) {
         timeLeft--;
+        // console.log('time left:', timeLeft);
 
-        console.log('time left:', timeLeft);
 
         timeoutId = setTimeout(countdown, 1000);
     }
@@ -260,9 +266,9 @@ function countdown() {
             roundtitle.classList.toggle('hidden');
             clickme.classList.toggle('hidden');
 
-            console.log('toggle #1')
+            // console.log('toggle #1')
         }
-        hideElements()
+        // hideElements()
     }
 
     if (timeLeft === 24 && loop === 1) {
@@ -296,7 +302,7 @@ function countdown() {
         // ** Gameplay Structure Section
 
         // * No. of Round - HEADING
-        const roundbar = elClassCont('DIV', 'small-rectangle round-title', ``, body);
+        const roundbar = elClassCont('DIV', 'small-rectangle round-title', `SUBMIT`, body);
 
         // * Container for all
         const gameplayContainer = elClassCont('DIV', 'gameplay-container', '', body);
@@ -358,13 +364,17 @@ function countdown() {
                     this.value = this.value.slice(0, 20);
                 } else if (/\d/.test(this.value)) {
                     gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
-                } else {
-                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
-                }
+                }    // } else {
+                //     gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
+                // }
             });
         });
 
         // * Country Validation
+
+        let countryScore = 0;
+        let hasAddedCountryScore = false;
+        let hasDeletedCountryScore = false;
 
         Array.from(inputCountrySelector).forEach(input => {
             let debounceTimeout = null;
@@ -374,14 +384,40 @@ function countdown() {
 
                 debounceTimeout = setTimeout(() => {
                     const inputCountry = this.value;
-                    console.log('Input Country:', inputCountry);
+                    // console.log('Input Country:', inputCountry);
 
                     const startingLetter = `${randomLetter}`;
-                    console.log('Starting letter:', startingLetter);
+                    // console.log('Starting letter:', startingLetter);
 
                     const verificationResult = verifyCountry(inputCountry, startingLetter);
-                    console.log('Verification Result:', verificationResult);
+                    // console.log('Verification Result:', verificationResult);
 
+                    if (verificationResult && !hasAddedCountryScore) {
+
+                        countryScore += 10;
+                        gameScore += 10;
+                        totalScore += 10
+                        // console.log('Country "true" Score:', countryScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasAddedCountryScore = true;
+                        hasDeletedCountryScore = false;
+
+                    } else if (!verificationResult && gameScore > 0 && !hasDeletedCountryScore) {
+
+                        countryScore -= 10;
+                        gameScore -= 10;
+                        totalScore -= 10;
+                        // console.log('Country "false" Score:', countryScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasDeletedCountryScore = true;
+                        hasAddedCountryScore = false;
+                    }
                 }, 500);
             });
         });
@@ -394,13 +430,15 @@ function countdown() {
                     this.value = this.value.slice(0, 20);
                 } else if (/\d/.test(this.value)) {
                     gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
-                } else {
-                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
                 }
             });
         });
 
         // * Sport Validation
+
+        let sportScore = 0;
+        let hasAddedSportScore = false;
+        let hasDeletedSportScore = false;
 
         Array.from(inputSportSelector).forEach(input => {
             let debounceTimeout = null;
@@ -410,17 +448,49 @@ function countdown() {
 
                 debounceTimeout = setTimeout(() => {
                     const inputSport = this.value;
-                    console.log('Input Sport:', inputSport);
+                    // console.log('Input Sport:', inputSport);
 
                     const startingLetter = `${randomLetter}`;
-                    console.log('Starting letter:', startingLetter);
+                    // console.log('Starting letter:', startingLetter);
 
                     const verificationResult = verifySport(inputSport, startingLetter);
-                    console.log('Verification Result:', verificationResult);
+                    // console.log('Verification Result (Sport):', verificationResult);
 
+                    if (verificationResult && !hasAddedSportScore) {
+
+                        sportScore += 10;
+                        gameScore += 10;
+                        totalScore += 10;
+                        // console.log('Sport "true" Score:', sportScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasAddedSportScore = true;
+
+                        hasDeletedSportScore = false;
+                    } else if (!verificationResult && gameScore > 0 && !hasDeletedSportScore) {
+
+                        sportScore -= 10;
+                        gameScore -= 10;
+                        totalScore -= 10;
+
+                        console.log('Sport "false" Score:', sportScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasDeletedSportScore = true;
+
+                        hasAddedSportScore = false;
+                    }
                 }, 500);
             });
         });
+
+
+
+
 
         // ** Profession
         Array.from(inputProfessionSelector).forEach(input => {
@@ -430,13 +500,15 @@ function countdown() {
                     this.value = this.value.slice(0, 20);
                 } else if (/\d/.test(this.value)) {
                     gameplayDescription.innerHTML = "<p style='color: red;'>Numbers are not permited!</p>";
-                } else {
-                    gameplayDescription.innerHTML = "Try to fill as much categories as you can, good luck!";
                 }
             });
         });
 
-        // * Sport Validation
+        // * Profession Validation
+
+        let professionScore = 0;
+        let hasAddedProfessionScore = false;
+        let hasDeletedProfessionScore = false;
 
         Array.from(inputProfessionSelector).forEach(input => {
             let debounceTimeout = null;
@@ -446,45 +518,104 @@ function countdown() {
 
                 debounceTimeout = setTimeout(() => {
                     const inputProfession = this.value;
-                    console.log('Input Profession:', inputProfession);
+                    // console.log('Input Profession:', inputProfession);
 
                     const startingLetter = `${randomLetter}`;
-                    console.log('Starting letter:', startingLetter);
+                    // console.log('Starting letter:', startingLetter);
 
                     const verificationResult = verifyProfession(inputProfession, startingLetter);
-                    console.log('Verification Result:', verificationResult);
+                    // console.log('Verification Result (Profession):', verificationResult);
 
+                    if (verificationResult && !hasAddedProfessionScore) {
+
+                        professionScore += 10;
+                        gameScore += 10;
+                        totalScore += 10;
+                        // console.log('Profession "true" Score:', professionScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasAddedProfessionScore = true;
+
+                        hasDeletedProfessionScore = false;
+                    } else if (!verificationResult && gameScore > 0 && !hasDeletedProfessionScore) {
+
+                        professionScore -= 10;
+                        gameScore -= 10;
+                        totalScore -= 10;
+                        // console.log('Profession "false" Score:', professionScore);
+                        console.log('game score:', gameScore);
+                        inputScore.innerHTML = `${totalScore}`;
+
+
+                        hasDeletedProfessionScore = true;
+                        hasAddedProfessionScore = false;
+                    }
                 }, 500);
             });
         });
+
+
     }
 
     // TODO Loop #2 ------------------------------------------------
 
-    // if (timeLeft === 0 && loop === 2) {
+    if (timeLeft === 0 && loop === 2) {
 
-    //     clickMe.addEventListener('click', function () {
-    //         const gameplayContainer = document.querySelector('.gameplay-container');
-    //         const inputsContainer = document.querySelector('.inputs-container');
-    //         const descriptionID = document.getElementById('descriptionID');
-    //         const roundtitle = document.querySelector('.round-title')
+        gameScore = 0;
 
-    //         if (gameplayContainer && inputsContainer && descriptionID && roundTitle) {
-    //             gameplayContainer.classList.toggle('hidden')
-    //             inputsContainer.classList.toggle('hidden')
-    //             descriptionID.classList.toggle('hidden');
-    //             roundtitle.classList.toggle('hidden');
-    //         }
+        const country = document.getElementById('input-country');
+        country.value = '';
 
-    //         console.log('toggle #2')
-    //     })
+        country.style.border = '2px solid grey';
+        country.style.backgroundColor = 'white';
 
 
+        const sport = document.getElementById('input-sport');
+        sport.value = ''
 
-    //     // resetTimer(25)
-    //     // console.log('-- The time is reset --')
-    //     // countdown()
-    // }
+        sport.style.border = '2px solid grey';
+        sport.style.backgroundColor = 'white';
+
+
+        const profession = document.getElementById('input-profession');
+        profession.value = '';
+
+        profession.style.border = '2px solid grey';
+        profession.style.backgroundColor = 'white';
+
+        console.log('total score:', totalScore);
+        console.log('game score:', gameScore);
+    }
+
+    if (timeLeft === 0 && loop === 3) {
+
+        gameScore = 0;
+
+        const country = document.getElementById('input-country');
+        country.value = '';
+
+        country.style.border = '2px solid grey';
+        country.style.backgroundColor = 'white';
+
+
+        const sport = document.getElementById('input-sport');
+        sport.value = '';
+
+        sport.style.border = '2px solid grey';
+        sport.style.backgroundColor = 'white';
+
+
+        const profession = document.getElementById('input-profession');
+        profession.value = '';
+
+        profession.style.border = '2px solid grey';
+        profession.style.backgroundColor = 'white';
+
+        console.log('total score:', totalScore);
+        console.log('game score:', gameScore);
+    }
 
 
 };
